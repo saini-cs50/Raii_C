@@ -641,6 +641,9 @@ And once you start using it, manually writing `free()` at every exit path feels 
 
 ## Reproducibility
 
+> [!NOTE]
+> All source code and benchmarks for this article can be found at **[https://github.com/saini-cs50/Raii_C](https://github.com/saini-cs50/Raii_C)**.
+
 All code from this article is available and was tested on:
 
 - **Compiler:** GCC 14.2.0 (MinGW-W64 x86_64-ucrt-posix-seh)
