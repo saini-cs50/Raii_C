@@ -4,6 +4,35 @@
 
 *In this article, we explore `__attribute__((cleanup))`, a GCC/Clang extension that brings RAII-style automatic cleanup to C. We'll build working examples, run real benchmarks, compare generated assembly, and discuss the pitfalls — with every claim verified on GCC 14.2.0.*
 
+```mermaid
+graph TD
+    %% Define Styles
+    classDef default fill:#1e1e1e,stroke:#555,stroke-width:2px,color:#fff;
+    classDef raii fill:#14452f,stroke:#2ea043,stroke-width:2px,color:#fff;
+    classDef manual fill:#4a1b1b,stroke:#f85149,stroke-width:2px,color:#fff;
+    classDef auto fill:#0d419d,stroke:#58a6ff,stroke-width:2px,color:#fff;
+
+    subgraph "The Old Way (Manual Cleanup)"
+        A1[Allocate Resource] --> B1{Error Occurs?}
+        B1 -- Yes --> C1[goto error_cleanup]:::manual
+        B1 -- No --> D1[Use Resource]
+        D1 --> E1[free resource]
+        C1 --> F1[free resource]
+        F1 --> G1[return error]
+        E1 --> H1[return success]
+    end
+
+    subgraph "The RAII Way (auto_free)"
+        A2[Allocate auto_free]:::raii --> B2{Error Occurs?}
+        B2 -- Yes --> C2[return error]
+        B2 -- No --> D2[Use Resource]
+        D2 --> E2[return success]
+        
+        C2 -.-> F2((Scope Ends: Compiler <br/>Auto-frees Resource)):::auto
+        E2 -.-> F2
+    end
+```
+
 ---
 
 ## The Problem: Manual Cleanup Doesn't Scale
